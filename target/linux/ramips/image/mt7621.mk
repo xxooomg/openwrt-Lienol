@@ -113,6 +113,7 @@ TARGET_DEVICES += adslr_g7
 
 define Device/afoundry_ew1200
   $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
   IMAGE_SIZE := 16064k
   DEVICE_VENDOR := AFOUNDRY
   DEVICE_MODEL := EW1200
@@ -1143,6 +1144,19 @@ define Device/mediatek_mt7621-eval-board
 endef
 TARGET_DEVICES += mediatek_mt7621-eval-board
 
+define Device/mercusys_mr70x-v1
+  $(Device/dsa-migration)
+  $(Device/tplink-safeloader)
+  DEVICE_VENDOR := Mercusys
+  DEVICE_MODEL := MR70X
+  DEVICE_VARIANT := v1
+  DEVICE_PACKAGES := kmod-mt7915e -uboot-envtools
+  TPLINK_BOARD_ID := MR70X
+  KERNEL := $(KERNEL_DTB) | uImage lzma
+  IMAGE_SIZE := 15744k
+endef
+TARGET_DEVICES += mercusys_mr70x-v1
+
 define Device/MikroTik
   $(Device/dsa-migration)
   DEVICE_VENDOR := MikroTik
@@ -1630,6 +1644,18 @@ define Device/totolink_x5000r
   DEVICE_PACKAGES := kmod-mt7915e
 endef
 TARGET_DEVICES += totolink_x5000r
+
+define Device/tplink_archer-ax23-v1
+  $(Device/dsa-migration)
+  $(Device/tplink-safeloader)
+  DEVICE_MODEL := Archer AX23
+  DEVICE_VARIANT := v1
+  DEVICE_PACKAGES := kmod-mt7915e -uboot-envtools
+  TPLINK_BOARD_ID := ARCHER-AX23-V1
+  KERNEL := $(KERNEL_DTB) | uImage lzma
+  IMAGE_SIZE := 15744k
+endef
+TARGET_DEVICES += tplink_archer-ax23-v1
 
 define Device/tplink_archer-a6-v3
   $(Device/dsa-migration)
