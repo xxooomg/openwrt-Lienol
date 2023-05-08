@@ -241,6 +241,8 @@ define Device/asus_rt-ax53u
   $(Device/dsa-migration)
   DEVICE_VENDOR := ASUS
   DEVICE_MODEL := RT-AX53U
+  DEVICE_ALT0_VENDOR := ASUS
+  DEVICE_ALT0_MODEL := RT-AX1800U
   IMAGE_SIZE := 51200k
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
@@ -250,7 +252,8 @@ define Device/asus_rt-ax53u
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-ubi | \
 	check-size
-  DEVICE_PACKAGES := kmod-mt7915e kmod-usb3 uboot-envtools
+  DEVICE_PACKAGES := kmod-mt7915e kmod-usb3 uboot-envtools \
+	kmod-usb-ledtrig-usbport
 endef
 TARGET_DEVICES += asus_rt-ax53u
 
@@ -303,6 +306,7 @@ TARGET_DEVICES += buffalo_wsr-2533dhpl
 
 define Device/buffalo_wsr-600dhp
   $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
   IMAGE_SIZE := 16064k
   DEVICE_VENDOR := Buffalo
   DEVICE_MODEL := WSR-600DHP
@@ -341,15 +345,50 @@ define Device/cudy_wr2100
 endef
 TARGET_DEVICES += cudy_wr2100
 
-define Device/cudy_x6
+define Device/cudy_x6-v1
   $(Device/dsa-migration)
   IMAGE_SIZE := 32256k
   DEVICE_VENDOR := Cudy
   DEVICE_MODEL := X6
+  DEVICE_VARIANT := v1
   UIMAGE_NAME := R13
   DEVICE_PACKAGES := kmod-mt7915e
+  SUPPORTED_DEVICES += cudy,x6 R13
 endef
-TARGET_DEVICES += cudy_x6
+TARGET_DEVICES += cudy_x6-v1
+
+define Device/cudy_x6-v2
+  $(Device/dsa-migration)
+  IMAGE_SIZE := 15872k
+  DEVICE_VENDOR := Cudy
+  DEVICE_MODEL := X6
+  DEVICE_VARIANT := v2
+  UIMAGE_NAME := R30
+  DEVICE_PACKAGES := kmod-mt7915e
+  SUPPORTED_DEVICES += cudy,x6 R30
+endef
+TARGET_DEVICES += cudy_x6-v2
+
+define Device/dlink_dap-x1860-a1
+  $(Device/dsa-migration)
+  IMAGE_SIZE := 53248k
+  DEVICE_VENDOR := D-Link
+  DEVICE_MODEL := DAP-X1860
+  DEVICE_VARIANT := A1
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 8192k
+  KERNEL_LOADADDR := 0x82000000
+  KERNEL := kernel-bin | relocate-kernel 0x80001000 | lzma | \
+	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  IMAGES += factory.bin
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-ubi | \
+	check-size | elx-header 011b0060 8844A2D168B45A2D
+  DEVICE_PACKAGES := kmod-mt7915e rssileds
+endef
+TARGET_DEVICES += dlink_dap-x1860-a1
 
 define Device/dlink_dir-8xx-a1
   $(Device/dsa-migration)
